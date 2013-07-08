@@ -1,9 +1,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
+#include <string.h>
+#include <malloc.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "mdnsd.h"
 #include "sdtxt.h"
@@ -64,7 +69,7 @@ int main(int argc, char *argv[])
     mdnsd d;
     mdnsdr r;
     struct message m;
-    unsigned long int ip;
+    struct in_addr ip;
     unsigned short int port;
     struct timeval *tv;
     int bsize, ssize = sizeof(struct sockaddr_in);
@@ -78,7 +83,7 @@ int main(int argc, char *argv[])
 
     if(argc < 4) { printf("usage: mhttp 'unique name' 12.34.56.78 80 '/optionalpath'\n"); return; }
 
-    ip = inet_addr(argv[2]);
+    ip.s_addr = inet_addr(argv[2]);
     port = atoi(argv[3]);
     printf("Announcing .local site named '%s' to %s:%d and extra path '%s'\n",argv[1],inet_ntoa(ip),port,argv[4]);
 
@@ -127,12 +132,12 @@ int main(int argc, char *argv[])
             }
             if(bsize < 0 && errno != EAGAIN) { printf("can't read from socket %d: %s\n",errno,strerror(errno)); return 1; }
         }
-        while(mdnsd_out(d,&m,&ip,&port))
+        while(mdnsd_out(d,&m,(long unsigned int*)&ip.s_addr,&port))
         {
             bzero(&to, sizeof(to));
             to.sin_family = AF_INET;
             to.sin_port = port;
-            to.sin_addr.s_addr = ip;
+            to.sin_addr.s_addr = ip.s_addr;
             if(sendto(s,message_packet(&m),message_packet_len(&m),0,(struct sockaddr *)&to,sizeof(struct sockaddr_in)) != message_packet_len(&m))  { printf("can't write to socket: %s\n",strerror(errno)); return 1; }
         }
         if(_shutdown) break;

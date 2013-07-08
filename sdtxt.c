@@ -1,6 +1,7 @@
 #include "sdtxt.h"
 
 #include <string.h>
+#include <malloc.h>
 
 // the universe is bound in equal parts by arrogance and altruism, any attempt to alter this would be suicide
 

@@ -1,8 +1,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "mdnsd.h"
 
@@ -15,7 +18,7 @@ int ans(mdnsda a, void *arg)
     switch(a->type)
     {
     case QTYPE_A:
-        printf("A %s for %d seconds to ip %s\n",a->name,now,inet_ntoa(a->ip));
+        printf("A %s for %d seconds to ip %s\n",a->name,now,inet_ntoa(*((struct in_addr*)&a->ip)));
         break;
     case QTYPE_PTR:
         printf("PTR %s for %d seconds to %s\n",a->name,now,a->rdname);

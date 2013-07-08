@@ -1,4 +1,5 @@
 #include "mdnsd.h"
+#include <malloc.h>
 #include <string.h>
 
 // size of query/publish hashes
