@@ -3,6 +3,8 @@
 #include "1035.h"
 #include <sys/time.h>
 
+#define QCLASS_IN (1)
+
 typedef struct mdnsd_struct *mdnsd; // main daemon data
 typedef struct mdnsdr_struct *mdnsdr; // record entry
 // answer data

@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     signal(SIGQUIT,done);
     signal(SIGTERM,done);
     pipe(_zzz);
-    _d = d = mdnsd_new(1,1000);
+    _d = d = mdnsd_new(QCLASS_IN,1000);
     if((s = msock()) == 0) { printf("can't create socket: %s\n",strerror(errno)); return 1; }
 
     sprintf(hlocal,"%s._http._tcp.local.",argv[1]);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     mdnsd_set_srv(d,r,0,0,port,nlocal);
     r = mdnsd_unique(d,nlocal,QTYPE_A,600,con,0);
     mdnsd_set_raw(d,r,(unsigned char *)&ip,4);
-    r = mdnsd_unique(d,hlocal,16,600,con,0);
+    r = mdnsd_unique(d,hlocal,QTYPE_TXT,600,con,0);
     h = xht_new(11);
     if(argc == 5 && argv[4] && strlen(argv[4]) > 0) xht_set(h,"path",argv[4]);
     packet = sd2txt(h, &len);
